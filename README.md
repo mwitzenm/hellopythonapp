@@ -57,9 +57,12 @@ svc/hellopythonapp - 172.30.72.143:8080
     bc/hellopythonapp source builds https://github.com/pjoomen/hellopythonapp.git on openshift/python:3.6
     deployment #1 deployed 35 seconds ago - 1 pod
 ...
-oc expose svc hellopythonapp`
+oc expose svc hellopythonapp
+
 route "hellopythonapp" exposed
-`curl $(oc get route hellopythonapp --template '{{.spec.host}}')`
+
+curl $(oc get route hellopythonapp --template '{{.spec.host}}')
+
 Hello Python World!
 ```
 Populating testing & production
@@ -68,9 +71,13 @@ We now want to reuse the same container image within the testing and production 
 ```
 oc project testing
 Now using project "testing" ...
-`oc tag development/hellopythonapp:latest hellopythonapp:test`
+
+oc tag development/hellopythonapp:latest hellopythonapp:test
+
 Tag hellopythonapp:test set to development/hellopythonapp@sha256:65e18883d9d6bf76c767e9abe572c3b3779d6aad6bee80148bfda4342e0ab0e8.
-`oc new-app --image-stream=hellopythonapp:test`
+
+oc new-app --image-stream=hellopythonapp:test
+
 --> Found image 2409f5b (5 minutes old) in image stream "testing/hellopythonapp" under tag "test" for "hellopythonapp:test"
 ...
 --> Creating resources ...
@@ -167,8 +174,10 @@ To allow Jenkins to run against the different projects, we need to allow it edit
 
 oc -n development policy add-role-to-user edit system:serviceaccount:cicd:jenkins
 role "edit" added: "system:serviceaccount:cicd:jenkins"
+
 oc -n testing policy add-role-to-user edit system:serviceaccount:cicd:jenkins
 role "edit" added: "system:serviceaccount:cicd:jenkins"
+
 oc -n production policy add-role-to-user edit system:serviceaccount:cicd:jenkins
 role "edit" added: "system:serviceaccount:cicd:jenkins"
 ```
@@ -187,7 +196,9 @@ It will take some time while Jenkins initialises. A build will be started as soo
 
  OpenShift Container Platform
 Jenkins running within OpenShift Container Platform
+
 oc logs bc/hellopythonapp
+
 info: Logs available at https://jenkins-cicd.<openshift_master_default_subdomain>/blue/organizations/jenkins/cicd%2Fcicd-hellopythonapp/detail/cicd-hellopythonapp/1/
 Open up the URL mentioned in the log-output to get to the Jenkins/Open Blue Ocean web interface. Here we can approve the deployment to testing, after confirming that the code is functioning properly within the development project.
 
