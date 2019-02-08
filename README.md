@@ -97,13 +97,15 @@ Repeat this same procedure for the production project, using the tag prod. This 
 
 Designing the pipeline
 Now that the bits & pieces are in place it is time to get a Jenkins instance up and running to be able to run new deployments from its pipeline. The pipeline consists of five stages:
-```
+
 build & deploy
 approval (test)
 deploy to test
 approval (production)
 deploy to production
 build & deploy
+
+```
 stage('build & deploy') {
   openshiftBuild bldCfg: 'hellopythonapp',
     namespace: 'development',
