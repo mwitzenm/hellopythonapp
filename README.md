@@ -1,7 +1,7 @@
 # hellopythonapp
 sample openshift application written in python
 OpenShift with Jenkins for dev/prod parity
-NOVEMBER 09, 2018
+
 The 12-factor app presents a number of guidelines to achieve DevOps compliancy. One of the guidelines specifies dev/prod parity, which in OpenShift can be implemented by re-using a single container image for all steps within an applications lifecycle. Here we will describe how dev/prod parity can be achieved within OpenShift by using the pipeline support of the OpenShift BuildConfig object type.
 
 Dev/prod parity within the 12-factor app
@@ -23,7 +23,7 @@ Enter OpenShift CI/CD with Jenkins pipelines.
 Prerequisites
 We are assuming you have access to a working Origin Kubernetes Distribution or OpenShift Container Platform installation. Make sure you are logged in:
 
-$ oc login
+`oc login`
 We also assume you have access to a (publicly) available Git repository containing the sourcecode for your project. In this post we use the application available at https://github.com/pjoomen/hellopythonapp.
 
 This is just the sourcecode for the application and not the Dockerfile used for building the application. We rely on Source-To-Image for building the container image. Note that public access is not an absolute requirement, but that configuration of credentials is out-of-scope for this post.
@@ -31,41 +31,41 @@ This is just the sourcecode for the application and not the Dockerfile used for 
 Creating the projects
 We start with the creation of three projects, one for each of the stages of the development workflow:
 
-$ oc new-project production
-$ oc new-project testing
-$ oc new-project development
+`oc new-project production`
+oc new-project testing`
+oc new-project development`
 Inter-project permissions
 To allow the production and testing environment to access the image from the registry in the development project, we need to add the image-puller role to service accounts from those projects:
 
-$ oc policy add-role-to-group system:image-puller system:serviceaccounts:production
-role "system:image-puller" added: "system:serviceaccounts:production"
-$ oc policy add-role-to-group system:image-puller system:serviceaccounts:testing
-role "system:image-puller" added: "system:serviceaccounts:testing"
+`oc policy add-role-to-group system:image-puller system:serviceaccounts:production
+role "system:image-puller" added: "system:serviceaccounts:production"`
+`oc policy add-role-to-group system:image-puller system:serviceaccounts:testing
+role "system:image-puller" added: "system:serviceaccounts:testing"`
 Populating development
 We are now ready to populate the projects with our sample application. We start out with development:
 
-$ oc new-app https://github.com/pjoomen/hellopythonapp.git
+`oc new-app https://github.com/mwitzenm/hellopythonapp.git`
 This will build the image using Source-To-Image, and creates a DeploymentConfig and a Service. After the application is available, expose it to the world and test its functionality:
 
-$ oc status
+`oc status
 ...
 svc/hellopythonapp - 172.30.72.143:8080
   dc/hellopythonapp deploys istag/hellopythonapp:latest <-
     bc/hellopythonapp source builds https://github.com/pjoomen/hellopythonapp.git on openshift/python:3.6
     deployment #1 deployed 35 seconds ago - 1 pod
-...
-$ oc expose svc hellopythonapp
+...`
+`oc expose svc hellopythonapp`
 route "hellopythonapp" exposed
-$ curl $(oc get route hellopythonapp --template '{{.spec.host}}')
+`curl $(oc get route hellopythonapp --template '{{.spec.host}}')`
 Hello Python World!
 Populating testing & production
 We now want to reuse the same container image within the testing and production projects. This can be achieved by creating an ImageStreamTag within those projects and then using the new-app verb to create the application:
 
-$ oc project testing
+`oc project testing`
 Now using project "testing" ...
-$ oc tag development/hellopythonapp:latest hellopythonapp:test
+`oc tag development/hellopythonapp:latest hellopythonapp:test`
 Tag hellopythonapp:test set to development/hellopythonapp@sha256:65e18883d9d6bf76c767e9abe572c3b3779d6aad6bee80148bfda4342e0ab0e8.
-$ oc new-app --image-stream=hellopythonapp:test
+`oc new-app --image-stream=hellopythonapp:test`
 --> Found image 2409f5b (5 minutes old) in image stream "testing/hellopythonapp" under tag "test" for "hellopythonapp:test"
 ...
 --> Creating resources ...
@@ -75,15 +75,15 @@ $ oc new-app --image-stream=hellopythonapp:test
     Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
      'oc expose svc/hellopythonapp'
     Run 'oc status' to view your app.
-$ oc status
+`oc status`
 ...
 svc/hellopythonapp - 172.30.54.10:8080
   dc/hellopythonapp deploys istag/hellopythonapp:test
     deployment #1 deployed 36 seconds ago - 1 pod
 ...
-$ oc expose svc/hellopythonapp
+`oc expose svc/hellopythonapp`
 route "hellopythonapp" exposed
-$ curl $(oc get route hellopythonapp --template '{{.spec.host}}')
+`curl $(oc get route hellopythonapp --template '{{.spec.host}}')`
 Hello Python World!
 Note that by creating the application like this, a rolling rollout is performed as soon as the ImageStreamTag object is updated.
 
