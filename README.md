@@ -51,12 +51,14 @@ To allow the production and testing environment to access the image from the reg
 
 ```
 oc policy add-role-to-group system:image-puller system:serviceaccounts:production
-
-role "system:image-puller" added: "system:serviceaccounts:production"
-
+...
+   role "system:image-puller" added: "system:serviceaccounts:production"
+...
 oc policy add-role-to-group system:image-puller system:serviceaccounts:testing
+...
+   role "system:image-puller" added: "system:serviceaccounts:testing"
+...
 
-role "system:image-puller" added: "system:serviceaccounts:testing"
 ```
 ---
 Populating development
