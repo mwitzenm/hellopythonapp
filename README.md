@@ -29,7 +29,7 @@ We are assuming you have access to a working Origin Kubernetes Distribution or O
 
 `oc login`
 
-We also assume you have access to a (publicly) available Git repository containing the sourcecode for your project. In this post we use the application available at https://github.com/pjoomen/hellopythonapp.
+We also assume you have access to a (publicly) available Git repository containing the sourcecode for your project. In this post we use the application available at https://github.com/mwitzenm/hellopythonapp.
 
 This is just the sourcecode for the application and not the Dockerfile used for building the application. We rely on Source-To-Image for building the container image. Note that public access is not an absolute requirement, but that configuration of credentials is out-of-scope for this post.
 
@@ -68,7 +68,7 @@ oc status
 ...
 svc/hellopythonapp - 172.30.72.143:8080
   dc/hellopythonapp deploys istag/hellopythonapp:latest <-
-    bc/hellopythonapp source builds https://github.com/pjoomen/hellopythonapp.git on openshift/python:3.6
+    bc/hellopythonapp source builds https://github.com/mwitzenm/hellopythonapp.git on openshift/python:3.6
     deployment #1 deployed 35 seconds ago - 1 pod
 ...
 oc expose svc hellopythonapp
@@ -237,8 +237,8 @@ role "edit" added: "system:serviceaccount:cicd:jenkins"
 We are now ready to create the pipeline. This will start a Jenkins instance within the project, if it was not already running:
 
 ```
-oc new-app https://github.com/pjoomen/hellopythonapp.git#pipeline
-* A pipeline build using source code from https://github.com/pjoomen/hellopythonapp.git#pipeline will be created
+oc new-app https://github.com/mwitzenm/hellopythonapp.git#pipeline
+* A pipeline build using source code from https://github.com/mwitzenm/hellopythonapp.git#pipeline will be created
   * Use 'start-build' to trigger a new build
 
 --> Creating resources ...
