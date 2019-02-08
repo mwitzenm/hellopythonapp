@@ -103,7 +103,7 @@ curl $(oc get route hellopythonapp --template '{{.spec.host}}')
 Repeat this same procedure for the production project, using the tag prod. This is left as an exercise for the reader.
 
 ```
-oc project testing
+oc project production
 
 oc tag development/hellopythonapp:latest hellopythonapp:prod
 
