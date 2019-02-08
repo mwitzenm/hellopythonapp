@@ -23,7 +23,7 @@ Enter OpenShift CI/CD with Jenkins pipelines.
 
 ---
 Prerequisites
----
+
 
 We are assuming you have access to a working Origin Kubernetes Distribution or OpenShift Container Platform installation. Make sure you are logged in:
 
@@ -35,7 +35,7 @@ This is just the sourcecode for the application and not the Dockerfile used for 
 
 ---
 Creating the projects
----
+
 
 We start with the creation of three projects, one for each of the stages of the development workflow:
 ```
@@ -45,7 +45,7 @@ oc new-project development
 ```
 ---
 Inter-project permissions
----
+
 
 To allow the production and testing environment to access the image from the registry in the development project, we need to add the image-puller role to service accounts from those projects:
 
@@ -57,7 +57,7 @@ role "system:image-puller" added: "system:serviceaccounts:testing"
 ```
 ---
 Populating development
----
+
 
 We are now ready to populate the projects with our sample application. We start out with development:
 
@@ -81,7 +81,7 @@ Hello Python World!
 ```
 ---
 Populating testing & production
----
+
 
 We now want to reuse the same container image within the testing and production projects. This can be achieved by creating an ImageStreamTag within those projects and then using the new-app verb to create the application:
 
@@ -121,7 +121,7 @@ Repeat this same procedure for the production project, using the tag prod. This 
 
 ---
 Designing the pipeline
----
+
 
 Now that the bits & pieces are in place it is time to get a Jenkins instance up and running to be able to run new deployments from its pipeline. The pipeline consists of five stages:
 
@@ -133,7 +133,7 @@ Now that the bits & pieces are in place it is time to get a Jenkins instance up 
 
 ----
 build & deploy
-----
+
 
 ```
 stage('build & deploy') {
@@ -150,7 +150,7 @@ This stage builds the container image using Source-To-Image and deploys the resu
 
 ----
 approval (test)
-----
+
 
 ```
 stage('approval (test)') {
@@ -163,7 +163,7 @@ This stage is just an interactive prompt to get approval for proceeding to the n
 
 ----
 deploy to test
-----
+
 
 ```
 stage('deploy to test') {
@@ -182,7 +182,7 @@ The actual deployment to the testing project is performed by moving the ImageStr
 
 ----
 approval (production)
-----
+
 
 ```
 stage('approval (production)') {
@@ -195,7 +195,7 @@ This stage is similar to stage 2, but this would usually be combined with integr
 
 ----
 deploy to production
-----
+
 
 ```
 stage('deploy to production') {
@@ -216,7 +216,7 @@ The above components are put into a code repository and this repository can be u
 
 ---
 Starting Jenkins
----
+
 
 We will use a dedicated project for running Jenkins:
 
@@ -282,6 +282,6 @@ build "hellopythonapp-2" started
 ```
 ---
 Conclusion
----
+
 
 Using the presented solution for your DevOps build needs helps making sure that no unintended changes are introduced within your application builds and thereby increases the guarantees of the dev/prod parity requirement from the 12-factor app methodology.
