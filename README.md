@@ -51,13 +51,8 @@ To allow the production and testing environment to access the image from the reg
 
 ```
 oc policy add-role-to-group system:image-puller system:serviceaccounts:production
-...
-   role "system:image-puller" added: "system:serviceaccounts:production"
-...
+
 oc policy add-role-to-group system:image-puller system:serviceaccounts:testing
-...
-   role "system:image-puller" added: "system:serviceaccounts:testing"
-...
 
 ```
 ---
@@ -76,13 +71,12 @@ svc/hellopythonapp - 172.30.72.143:8080
     bc/hellopythonapp source builds https://github.com/mwitzenm/hellopythonapp.git on openshift/python:3.6
     deployment #1 deployed 35 seconds ago - 1 pod
 ...
+```
+```
 oc expose svc hellopythonapp
-
-route "hellopythonapp" exposed
 
 curl $(oc get route hellopythonapp --template '{{.spec.host}}')
 
-Hello Python World!
 ```
 ---
 Populating testing & production
@@ -92,37 +86,36 @@ We now want to reuse the same container image within the testing and production 
 
 ```
 oc project testing
-Now using project "testing" ...
 
 oc tag development/hellopythonapp:latest hellopythonapp:test
 
-Tag hellopythonapp:test set to development/hellopythonapp@sha256:65e18883d9d6bf76c767e9abe572c3b3779d6aad6bee80148bfda4342e0ab0e8.
-
 oc new-app --image-stream=hellopythonapp:test
 
---> Found image 2409f5b (5 minutes old) in image stream "testing/hellopythonapp" under tag "test" for "hellopythonapp:test"
-...
---> Creating resources ...
-    deploymentconfig.apps.openshift.io "hellopythonapp" created
-    service "hellopythonapp" created
---> Success
-    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
-     'oc expose svc/hellopythonapp'
-    Run 'oc status' to view your app.
 oc status
-...
-svc/hellopythonapp - 172.30.54.10:8080
-  dc/hellopythonapp deploys istag/hellopythonapp:test
-    deployment #1 deployed 36 seconds ago - 1 pod
-...
+
 oc expose svc/hellopythonapp
-route "hellopythonapp" exposed
+
 curl $(oc get route hellopythonapp --template '{{.spec.host}}')
-Hello Python World!
+
 ```
 ***Note that by creating the application like this, a rolling rollout is performed as soon as the ImageStreamTag object is updated.
 
 Repeat this same procedure for the production project, using the tag prod. This is left as an exercise for the reader.
+
+```
+oc project testing
+
+oc tag development/hellopythonapp:latest hellopythonapp:prod
+
+oc new-app --image-stream=hellopythonapp:prod
+
+oc status
+
+oc expose svc/hellopythonapp
+
+curl $(oc get route hellopythonapp --template '{{.spec.host}}')
+```
+
 
 ---
 Designing the pipeline
